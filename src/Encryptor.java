@@ -1,5 +1,6 @@
 import org.apache.commons.cli.*;
 
+import javax.swing.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -10,7 +11,8 @@ import java.util.Scanner;
 
 public class Encryptor {
     public static void main(String[] args) throws IOException {
-        RSADecrypt("test", RSAEncrypt("test", "help"));
+        /*KeyGen("test");
+        RSADecrypt("test", RSAEncrypt("test", "\uDB40\uDDFF and this too"));
 
         String caesarTest = caesarCipher("Death is upon us!!", 10).toString();
         System.out.println(caesarTest);
@@ -18,7 +20,7 @@ public class Encryptor {
 
         String vigenereTest = vigenereCipher("Death is upon us!!", "TEXT");
         System.out.println(vigenereTest);
-        System.out.println(vigenereDeCipher(vigenereTest, "TEXT"));
+        System.out.println(vigenereDeCipher(vigenereTest, "TEXT"));*/
     }
 
     public static StringBuffer caesarCipher(String text, int s) {
@@ -78,7 +80,7 @@ public class Encryptor {
         for (int i = 0, j = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c < 'A' || c > 'Z') continue;
-            res += (char)((c - key.charAt(j) + 26) % 26 + 'A');
+            res += (char) ((c - key.charAt(j) + 26) % 26 + 'A');
             j = ++j % key.length();
         }
         return res;
@@ -88,7 +90,10 @@ public class Encryptor {
         Scanner scan = new Scanner(new File(file));
         StringBuilder sb = new StringBuilder();
         for (char ch : message.toCharArray()) {
-            sb.append((byte) ch);
+            short val = (short) ch;
+            String sVal = "" + val;
+            while (sVal.length() < 5) sVal = "0" + sVal;
+            sb.append(sVal);
         }
         BigInteger msg = new BigInteger(sb.toString());
         BigInteger n = new BigInteger(scan.nextLine());
@@ -108,8 +113,11 @@ public class Encryptor {
         String data = deCrypt.toString();
         StringBuilder sb = new StringBuilder();
         while (!data.equals("")) {
-            sb.append(Character.toString((char) Integer.parseInt(data.substring(0, 3))));
-            data = data.substring(3);
+            if (data.length() < 5)
+                sb.append(Character.toString((char) Short.parseShort(data)));
+            else
+                sb.append(Character.toString((char) Short.parseShort(data.substring(0, 5))));
+            data = data.substring(5);
         }
         out.write(sb.toString());
         out.close();
